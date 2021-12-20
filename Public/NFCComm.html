@@ -10,10 +10,17 @@
 
 <h3>NFC Communication</h3>
 
-
+<p><b>Click scan Button to scan NFC info</b></p>
 <button id="scanButton">Scan</button>
-<button id="writeButton">Write</button>
+<br><br>
 
+<p><b>Write NFC message and click write button</b></p>
+<input type="text" placeholder="Enter NFC message" id="nfcMessage"></input>
+<br><br>
+<button id="writeButton">Write</button>
+<br><br>
+
+<h4>Output:-</h4>
 <p id="messages"></p>
     
 </body>
@@ -22,45 +29,72 @@
         var scanButton=document.getElementById("scanButton");
         var writeButton=document.getElementById("writeButton");
         var messages=document.getElementById("messages");
+        var nfcMessage=document.getElementById("nfcMessage");
+
+
 
      scanButton.addEventListener("click", async () => {
         //log("User clicked scan button");
-        messages.innerHTML=messages.innerHTML+"<br>"+"User clicked scan button";
+                messages.innerHTML=messages.innerHTML+"<br>"+"User clicked scan button";
 
-        try {
-            const ndef = new NDEFReader();
-            await ndef.scan();
-            messages.innerHTML=messages.innerHTML+"<br>"+"Scan Started";
+                if ('NDEFReader' in window) {
+                        try {
+                            const ndef = new NDEFReader();
+                            await ndef.scan();
+                            messages.innerHTML=messages.innerHTML+"<br>"+"Scan Started";
 
-            ndef.addEventListener("readingerror", () => {
-            //log("Argh! Cannot read data from the NFC tag. Try another one?");
-            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! Cannot read data from the NFC tag. Try another one?";
-            });
+                            ndef.addEventListener("readingerror", () => {
+                            //log("Argh! Cannot read data from the NFC tag. Try another one?");
+                            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! Cannot read data from the NFC tag. Try another one?";
+                            });
 
-            ndef.addEventListener("reading", ({ message, serialNumber }) => {
-            //log(`> Serial Number: ${serialNumber}`);
-            //log(`> Records: (${message.records.length})`);
-            messages.innerHTML=messages.innerHTML+"<br>"+`> Serial Number: ${serialNumber}`;
-            messages.innerHTML=messages.innerHTML+"<br>"+`> Records: (${message.records.length})`;
-            });
-        } catch (error) {
-            //log("Argh! " + error);
-            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
-        }
+                            ndef.addEventListener("reading", ({ message, serialNumber }) => {
+                            //log(`> Serial Number: ${serialNumber}`);
+                            //log(`> Records: (${message.records.length})`);
+                            messages.innerHTML=messages.innerHTML+"<br>"+`> Serial Number: ${serialNumber}`;
+                            messages.innerHTML=messages.innerHTML+"<br>"+`> Records: (${message.records.length})`;
+                            });
+                        } catch (error) {
+                            //log("Argh! " + error);
+                            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
+                        }
+            }
+
+
+                else
+                {
+                    messages.innerHTML=messages.innerHTML+"<br>"+"NFC is not supported in your browser";
+                }
         });
+    
 
         writeButton.addEventListener("click", async () => {
         //log("User clicked write button");
         messages.innerHTML=messages.innerHTML+"<br>"+"User clicked write button";
+        if(nfcMessage.value!="")
+        {
+            if ('NDEFReader' in window) {   
 
-        try {
-            const ndef = new NDEFReader();
-            await ndef.write("Hello world!");
-           // log("> Message written");
-           messages.innerHTML=messages.innerHTML+"<br>"+"> Message written";
-        } catch (error) {
-            //log("Argh! " + error);
-            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
+                try {
+                    const ndef = new NDEFReader();
+                    await ndef.write("Hello world!");
+                // log("> Message written");
+                messages.innerHTML=messages.innerHTML+"<br>"+"> Message written";
+                } catch (error) {
+                    //log("Argh! " + error);
+                    messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
+                }
+            }
+
+            else
+            {
+                messages.innerHTML=messages.innerHTML+"<br>"+"NFC is not supported in your browser";
+            }
+        }  
+        
+        else
+        {
+            messages.innerHTML=messages.innerHTML+"<br>"+"Please enter NFC message";
         }
 });
 
