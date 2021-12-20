@@ -77,7 +77,7 @@
 
                 try {
                     const ndef = new NDEFReader();
-                    await ndef.write("Hello world!");
+                    await ndef.write(nfcMessage.value);
                 // log("> Message written");
                 messages.innerHTML=messages.innerHTML+"<br>"+"> Message written";
                 } catch (error) {
