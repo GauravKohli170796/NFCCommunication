@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nfc Communication</title>
+</head>
+<body>
+
+<h3>NFC Communication</h3>
+
+
+<button id="scanButton">Scan</button>
+<button id="writeButton">Write</button>
+
+<p id="messages"></p>
+    
+</body>
+
+<script>
+        var scanButton=document.getElementById("scanButton");
+        var writeButton=document.getElementById("writeButton");
+        var messages=document.getElementById("messages");
+
+     scanButton.addEventListener("click", async () => {
+        //log("User clicked scan button");
+        messages.innerHTML=messages.innerHTML+"<br>"+"User clicked scan button";
+
+        try {
+            const ndef = new NDEFReader();
+            await ndef.scan();
+            messages.innerHTML=messages.innerHTML+"<br>"+"Scan Started";
+
+            ndef.addEventListener("readingerror", () => {
+            //log("Argh! Cannot read data from the NFC tag. Try another one?");
+            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! Cannot read data from the NFC tag. Try another one?";
+            });
+
+            ndef.addEventListener("reading", ({ message, serialNumber }) => {
+            //log(`> Serial Number: ${serialNumber}`);
+            //log(`> Records: (${message.records.length})`);
+            messages.innerHTML=messages.innerHTML+"<br>"+`> Serial Number: ${serialNumber}`;
+            messages.innerHTML=messages.innerHTML+"<br>"+`> Records: (${message.records.length})`;
+            });
+        } catch (error) {
+            //log("Argh! " + error);
+            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
+        }
+        });
+
+        writeButton.addEventListener("click", async () => {
+        //log("User clicked write button");
+        messages.innerHTML=messages.innerHTML+"<br>"+"User clicked write button";
+
+        try {
+            const ndef = new NDEFReader();
+            await ndef.write("Hello world!");
+           // log("> Message written");
+           messages.innerHTML=messages.innerHTML+"<br>"+"> Message written";
+        } catch (error) {
+            //log("Argh! " + error);
+            messages.innerHTML=messages.innerHTML+"<br>"+"Argh! " + error.message;
+        }
+});
+
+
+</script>
+</html>
